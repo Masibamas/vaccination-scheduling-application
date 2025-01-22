@@ -57,13 +57,13 @@
     <div class="row mb-1 btn-container">
       <div class="col-12">
         <button class="btn btn-sm btn-success m-1">
-          <a href=" {% url "center:storage-update" object.id %}">
+          <a href="{% url 'center:storage-update' object.id %}">
             <i class="fas fa-pen"></i> Update Storage
           </a>
         </button>
 
         <button class="btn btn-sm btn-danger m-1">
-          <a href="{% url "center:storage-delete" object.id %}">
+          <a href="{% url 'center:storage-delete' object.id %}">
             <i class="fas fa-trash"></i> Delete Storage
           </a>
         </button>

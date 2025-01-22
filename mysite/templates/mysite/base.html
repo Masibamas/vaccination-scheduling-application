@@ -6,12 +6,12 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block title %}
 
-<title>Book My Vaccine</title>
-
+    {% endblock title %}
 
   <!--    Favicon     -->
-  <link rel="icon" type="image/png" href="" />
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}" />
 
   <!--    Bootstrap 5 CSS CDN Link  -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -57,17 +57,16 @@
       </div>
     </div>
   </nav>
-</header>
+</header> 
 
-{% include 'components/message.html' %}
+{% include "components/message.html" %}
 
 <div class="container main-content mt-2 p-2">
     {% block content %}
 
     {% endblock content %}
-  </div>
-
-  <footer class="text-center">
+</div>
+<footer class="text-center">
     Copyright &#169 XYZ Privated Limited
   </footer>
 
