@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from campaign.models import Campaign
+from campaign.models import Campaign , Slot
 from vaccination.models import Vaccination
-from campaign.form import CampaignForm
+from campaign.form import CampaignForm, SlotForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 
@@ -49,3 +49,71 @@ class CampaignDeleteView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMes
     permission_required = ("campaign.delete_campaign",)
     success_message = "campaign deleted successfully"
     success_url = reverse_lazy("campaign:campaign-list")
+
+class SlotListView(LoginRequiredMixin, generic.ListView):
+    model = Slot
+    template_name = "campaign/slot-list.html"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Slot.objects.filter(campaign = self.kwargs["campaign_id"]).order_by("id")
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["campaign_id"]=self.kwargs["campaign_id"]
+        return context
+
+class SlotDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Slot
+    template_name = "campaign/slot-detail.html"
+
+class SlotCreateView(LoginRequiredMixin,PermissionRequiredMixin,SuccessMessageMixin, generic.CreateView):
+    model = Slot
+    form_class = SlotForm
+    template_name = "campaign/slot-create.html"
+    permission_required = ("campaign.add_slot",)
+    success_message = "slot created successfully"
+
+    def get_success_url(self):
+        return reverse_lazy("campaign:slot-list", kwargs= {"campaign_id":self.kwargs["campaign_id"]})
+    
+    def get_initial(self):
+        initial= super().get_initial()
+        initial["campaign"]= Campaign.objects.get(id = self.kwargs["campaign_id"])
+        return initial
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["campaign_id"]=self.kwargs["campaign_id"]
+        return kwargs
+    
+class SlotUpdateView(LoginRequiredMixin, PermissionRequiredMixin,SuccessMessageMixin, generic.UpdateView):
+    model = Slot
+    form_class = SlotForm
+    permission_required = ("campaign.change_slot",)
+    template_name = "campaign/slot-update.html"
+    success_message = "Slot updated successfully"
+    
+    def get_success_url(self):
+        return reverse_lazy("campaign:slot-list", kwargs={"campaign_id":self.kwargs["campaign_id"]}) 
+   
+    def get_initial(self):
+        initial= super().get_initial()
+        initial["campaign"]= Campaign.objects.get(id = self.kwargs["campaign_id"])
+        return initial
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["campaign_id"]=self.kwargs["campaign_id"]
+        return kwargs
+    
+
+class SlotDeleteView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, generic.DeleteView):
+    model = Slot
+    template_name = "campaign/slot-delete.html"
+    permission_required = ("campaign.delete_slot",)
+    success_message = "Slot deleted successfully"
+
+    def get_success_url(self):
+        return reverse_lazy("campaign:slot-list", kwargs={"campaign_id":self.get_object().campaign.id})
